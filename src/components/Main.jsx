@@ -1,11 +1,17 @@
 import { useState } from "react"
 import ClaudeRecipe from "./ClaudeRecipe"
 import IngredientsList from "./IngredientsList"
+import { getRecipeFromMistral } from "../../ai"
 
 const Main = () => {
   const [ingredients, setIngredients] = useState(["Chicken", "Oregano", "Tomatoes"])
-  const [recipeShown, setRecipeShown] = useState(false)
+  const [recipe, setRecipe] = useState(false)
   // const ingredients = ["Chicken", "Oregano", "Tomatoes"]
+
+  const getRecipe = async () => {
+    const recipeMarkdown = await getRecipeFromMistral(ingredients)
+    console.log(recipeMarkdown)
+  }
 
   const addIngredient = (event) => {
     event.preventDefault();
@@ -15,8 +21,8 @@ const Main = () => {
     event.target.reset()
   }
 
-  const toggleRecipeShown = () => {
-    setRecipeShown(prevRecipeShown => !prevRecipeShown)
+  const toggleRecipe = () => {
+    setRecipe(prevRecipe => !prevRecipe)
   }
 
   return (
@@ -28,15 +34,15 @@ const Main = () => {
           aria-label="Add ingredient"
           name="ingredient"
         />
-        <button >Add ingredient
+        <button onClick={getRecipe}>Add ingredient
         </button>
       </form>
       {ingredients.length > 0 && 
       <IngredientsList 
         ingredients={ingredients}
-        toggleRecipeShown={toggleRecipeShown}
+        toggleRecipe={toggleRecipe}
       />}
-        {recipeShown && <ClaudeRecipe />}
+        {recipe && <ClaudeRecipe />}
     </main>
   )
 }
